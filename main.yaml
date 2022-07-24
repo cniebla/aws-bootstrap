@@ -179,7 +179,7 @@ Resources:
     Type: 'AWS::EC2::Instance'
     CreationPolicy:
       ResourceSignal:
-        Timeout: PT15M
+        Timeout: PT20M
         Count: 1
     Metadata:
       'AWS::CloudFormation::Init':
@@ -211,6 +211,7 @@ Resources:
           exec > /tmp/userdata.log 2>&1
 
           # Update all packages
+          sleep 300
           sudo yum -y update
 
           # Have CloudFormation install any files and packages from the metadata
