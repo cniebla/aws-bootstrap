@@ -6,7 +6,7 @@ CLI_PROFILE=default
 
 EC2_INSTANCE_TYPE=t2.micro
 
-# Deploy the CloudFormation template
+# Delete the CloudFormation stack
 echo -e "\n\n=========== Deleting stack ==========="
 aws cloudformation delete-stack \
   --profile $CLI_PROFILE \
