@@ -22,5 +22,5 @@ aws cloudformation deploy \
 if [ $? -eq 0 ]; then
   aws cloudformation list-exports \
     --profile default \
-    --query "Exports[?ends_with(Name,'LBEndpoint')].Value"
+    --query "Exports[?ends_with(Name,'Endpoint')].Value"
 fi
