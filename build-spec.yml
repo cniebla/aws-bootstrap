@@ -17,4 +17,4 @@ phases:
       - stop-service.sh
       - server.js
       - package.json
-      - appspec.yaml
+      - appspec.yml

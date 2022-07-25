@@ -118,15 +118,15 @@ Resources:
                 Owner: ThirdParty
                 Version: 1
                 Provider: GitHub
-          OutputArtifacts:
-            - Name: Source
-          Configuration:
-            Owner: !Ref GitHubOwner
-            Repo: !Ref GitHubRepo
-            Branch: !Ref GitHubBranch
-            OAuthToken: !Ref GitHubPersonalAccessToken
-            PollForSourceChanges: false
-          RunOrder: 1
+              OutputArtifacts:
+                - Name: Source
+              Configuration:
+                Owner: !Ref GitHubOwner
+                Repo: !Ref GitHubRepo
+                Branch: !Ref GitHubBranch
+                OAuthToken: !Ref GitHubPersonalAccessToken
+                PollForSourceChanges: false
+              RunOrder: 1
         - Name: Build
           Actions:
             - Name: Build
@@ -135,27 +135,27 @@ Resources:
                 Owner: AWS
                 Version: 1
                 Provider: CodeBuild
-          InputArtifacts:
-            - Name: Source
-          OutputArtifacts:
-            - Name: Build
-          Configuration:
-            ProjectName: !Ref BuildProject
-          RunOrder: 1
+              InputArtifacts:
+                - Name: Source
+              OutputArtifacts:
+                - Name: Build
+              Configuration:
+                ProjectName: !Ref BuildProject
+              RunOrder: 1
         - Name: Staging
           Actions:
             - Name: Staging
-          InputArtifacts:
-            - Name: Build
+              InputArtifacts:
+                - Name: Build
               ActionTypeId:
                 Category: Deploy
                 Owner: AWS
                 Version: 1
                 Provider: CodeDeploy
-          Configuration:
-            ApplicationName: !Ref DeploymentApplication
-            DeploymentGroupName: !Ref StagingDeploymentGroup
-          RunOrder: 1
+              Configuration:
+                ApplicationName: !Ref DeploymentApplication
+                DeploymentGroupName: !Ref StagingDeploymentGroup
+              RunOrder: 1
   PipelineWebhook:
     Type: AWS::CodePipeline::Webhook
     Properties:
