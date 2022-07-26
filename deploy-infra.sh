@@ -10,6 +10,7 @@ EC2_INSTANCE_TYPE=t2.micro
 AWS_ACCOUNT_ID=`aws sts get-caller-identity --profile $CLI_PROFILE \
 --query "Account" --output text`
 CODEPIPELINE_BUCKET="$STACK_NAME-$REGION-codepipeline-$AWS_ACCOUNT_ID"
+CFN_BUCKET="$STACK_NAME-cfn-$AWS_ACCOUNT_ID"
 
 # Dynamic variables
 GH_ACCESS_TOKEN=$(cat ~/.github/aws-bootstrap-access-token)
@@ -27,7 +28,25 @@ aws cloudformation deploy \
   --no-fail-on-empty-changeset \
   --capabilities CAPABILITY_NAMED_IAM \
   --parameter-overrides \
-    CodePipelineBucket=$CODEPIPELINE_BUCKET
+    CodePipelineBucket=$CODEPIPELINE_BUCKET \
+    CloudFormationBucket=$CFN_BUCKET
+
+# Package up CloudFormation templates into an S3 bucket
+echo -e "\n\n=========== Packaging main.yaml ==========="
+mkdir -p ./cfn_output
+
+PACKAGE_ERR="$(aws cloudformation package \
+  --region $REGION \
+  --profile $CLI_PROFILE \
+  --template main.yaml \
+  --s3-bucket $CFN_BUCKET \
+  --output-template-file ./cfn_output/main.yaml 2>&1)"
+
+if ! [[ $PACKAGE_ERR =~ "Successfully packaged artifacts" ]]; then
+  echo "ERROR while running 'aws cloudformation package' command:"
+  echo $PACKAGE_ERR
+  exit 1
+fi
 
 # Deploy the CloudFormation template
 echo -e "\n\n=========== Deploying main.yaml ==========="
@@ -35,7 +54,7 @@ aws cloudformation deploy \
   --region $REGION \
   --profile $CLI_PROFILE \
   --stack-name $STACK_NAME \
-  --template-file main.yaml \
+  --template-file ./cfn_output/main.yaml \
   --no-fail-on-empty-changeset \
   --capabilities CAPABILITY_NAMED_IAM \
   --parameter-overrides \
@@ -49,6 +68,6 @@ aws cloudformation deploy \
 # If the deploy succeeded, show the DNS name of the endpoints
 if [ $? -eq 0 ]; then
   aws cloudformation list-exports \
-    --profile default \
+    --profile $CLI_PROFILE \
     --query "Exports[?ends_with(Name,'LBEndpoint')].Value"
 fi

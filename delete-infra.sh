@@ -4,8 +4,6 @@ STACK_NAME=awsbootstrap
 REGION=us-east-2
 CLI_PROFILE=default
 
-EC2_INSTANCE_TYPE=t2.micro
-
 # Delete the CloudFormation stack
 echo -e "\n\n=========== Deleting stack ==========="
 aws cloudformation delete-stack \
