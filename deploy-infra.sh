@@ -12,6 +12,9 @@ AWS_ACCOUNT_ID=`aws sts get-caller-identity --profile $CLI_PROFILE \
 --query "Account" --output text`
 CODEPIPELINE_BUCKET="$STACK_NAME-$REGION-codepipeline-$AWS_ACCOUNT_ID"
 CFN_BUCKET="$STACK_NAME-cfn-$AWS_ACCOUNT_ID"
+CERT=`aws acm list-certificates --region $REGION --profile $CLI_PROFILE \
+  --output text \
+  --query "CertificateSummaryList[?DomainName=='$DOMAIN'].CertificateArn | [0]"`
 
 # Dynamic variables
 GH_ACCESS_TOKEN=$(cat ~/.github/aws-bootstrap-access-token)
@@ -61,6 +64,7 @@ aws cloudformation deploy \
   --parameter-overrides \
     EC2InstanceType=$EC2_INSTANCE_TYPE \
     Domain=$DOMAIN \
+    Certificate=$CERT \
     GitHubOwner=$GH_OWNER \
     GitHubRepo=$GH_REPO \
     GitHubBranch=$GH_BRANCH \
