@@ -5,7 +5,20 @@ Parameters:
   EC2AMI:
     Type: String
     Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+  Domain:
+    Type: String
+  SubDomain:
+    Type: String
 Resources:
+  DNS:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: !Sub '${Domain}.'
+      Name: !Sub '${SubDomain}.${Domain}.'
+      Type: A
+      AliasTarget:
+        HostedZoneId: !GetAtt LoadBalancer.CanonicalHostedZoneID
+        DNSName: !GetAtt LoadBalancer.DNSName
   SecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -278,7 +291,7 @@ Resources:
 Outputs:
   LBEndpoint:
     Description: The DNS name for the LB
-    Value: !Sub "http://${LoadBalancer.DNSName}:80"
+    Value: !Sub "http://${DNS}"
   ScalingGroup:
     Description: The ScalingGroup for this stage
     Value: !Ref ScalingGroup

@@ -1,5 +1,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 Parameters:
+  Domain:
+    Type: String
   EC2InstanceType:
     Type: String
   EC2AMI:
@@ -31,6 +33,8 @@ Resources:
       Parameters:
         EC2InstanceType: !Ref EC2InstanceType
         EC2AMI: !Ref EC2AMI
+        Domain: !Ref Domain
+        SubDomain: staging
   StagingDeploymentGroup:
     Type: AWS::CodeDeploy::DeploymentGroup
     Properties:
@@ -49,6 +53,8 @@ Resources:
       Parameters:
         EC2InstanceType: !Ref EC2InstanceType
         EC2AMI: !Ref EC2AMI
+        Domain: !Ref Domain
+        SubDomain: prod
   ProdDeploymentGroup:
     Type: AWS::CodeDeploy::DeploymentGroup
     Properties:

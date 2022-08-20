@@ -5,6 +5,7 @@ STACK_NAME=awsbootstrap
 REGION=us-east-2
 CLI_PROFILE=default
 EC2_INSTANCE_TYPE=t2.micro
+DOMAIN=fogres.com
 
 # Semi-dynamic variables
 AWS_ACCOUNT_ID=`aws sts get-caller-identity --profile $CLI_PROFILE \
@@ -59,6 +60,7 @@ aws cloudformation deploy \
   --capabilities CAPABILITY_NAMED_IAM \
   --parameter-overrides \
     EC2InstanceType=$EC2_INSTANCE_TYPE \
+    Domain=$DOMAIN \
     GitHubOwner=$GH_OWNER \
     GitHubRepo=$GH_REPO \
     GitHubBranch=$GH_BRANCH \
